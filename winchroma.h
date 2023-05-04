@@ -33,7 +33,7 @@ namespace chroma {
 
 #else // CHROMA_DEBUG
 
-#define LOG(format, ...) _tprintf("%s:%d:  " format "\n", \
+#define LOG(format, ...) _tprintf(_T("%s:%d:  ") _T(format) _T("\n"), \
     chroma::impl::fileName(_T(__FILE__)), __LINE__, __VA_ARGS__)
 #define CHECKERR(expr) chroma::impl::checkErr((expr), _T(__FILE__), __LINE__, _T(#expr))
 
