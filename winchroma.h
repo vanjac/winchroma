@@ -166,7 +166,7 @@ inline HWND createChildWindow(
         void *param = NULL) {
     return CreateWindowEx(exStyle, className, windowName, style | WS_CHILD,
         windowRect.left, windowRect.top, rectWidth(windowRect), rectHeight(windowRect),
-        parent, (HMENU)ctrlId, GetModuleHandle(NULL), param);
+        parent, (HMENU)(size_t)ctrlId, GetModuleHandle(NULL), param);
 }
 
 inline RECT windowRect(HWND hwnd) {
