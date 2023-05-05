@@ -71,7 +71,23 @@ namespace impl {
 template <typename T>
 T* tempPtr(T &&x) { return &x; }
 
-/* RECT UTILS */
+/* GEOMETRY UTILS */
+
+inline bool operator==(const POINT &a, const POINT &b) {
+    return a.x == b.x && a.y == b.y;
+}
+
+inline bool operator!=(const POINT &a, const POINT &b) {
+    return !(a == b);
+}
+
+inline bool operator==(const SIZE &a, const SIZE &b) {
+    return a.cx == b.cx && a.cy == b.cy;
+}
+
+inline bool operator!=(const SIZE &a, const SIZE &b) {
+    return !(a == b);
+}
 
 constexpr int rectWidth(const RECT &rect) {
     return rect.right - rect.left;
