@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <windowsx.h>
 #include <CommCtrl.h>
+#include <commdlg.h>
 #include <tchar.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +14,7 @@
 #pragma comment(lib, "User32.lib")
 #pragma comment(lib, "Gdi32.lib")
 #pragma comment(lib, "Comctl32.lib")
+#pragma comment(lib, "Comdlg32.lib")
 
 #ifdef CHROMA_DEBUG
 #pragma comment(linker, "/subsystem:console")
@@ -132,6 +134,7 @@ const WNDCLASSEX SCRATCH_CLASS = {
     NULL,                           // hIconSm
 };
 
+// initialize the most common fields of WNDCLASSEX
 inline WNDCLASSEX makeClass(const TCHAR *name, WNDPROC proc) {
     WNDCLASSEX wndClass = SCRATCH_CLASS;
     wndClass.lpszClassName = name;
@@ -278,5 +281,20 @@ struct CDC : CResource<HDC, BOOL (__stdcall *)(HDC), DeleteDC> {
         SelectObject(_obj, obj);
     }
 };
+
+/* COMMON DIALOG UTILS */
+
+// initialize the most common fields of OPENFILENAME
+inline OPENFILENAME makeOpenFileName(TCHAR *fileBuf, HWND owner, const TCHAR *filters,
+        const TCHAR *defExt=NULL) {
+    OPENFILENAME open = {sizeof(open)};
+    open.hwndOwner = owner;
+    open.lpstrFilter = filters;
+    open.lpstrFile = fileBuf;
+    open.nMaxFile = MAX_PATH;
+    open.Flags = OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY;
+    open.lpstrDefExt = defExt;
+    return open;
+}
 
 }
