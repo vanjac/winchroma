@@ -223,8 +223,7 @@ inline POINT cursorPos() {
 }
 
 namespace impl {
-    const BOOL ignore = InitCommonControlsEx(tempPtr(
-        INITCOMMONCONTROLSEX {sizeof(INITCOMMONCONTROLSEX), ICC_WIN95_CLASSES}));
+    const char ignore = (InitCommonControls(), 0);
 }
 
 /* GDI UTILS */
@@ -236,7 +235,7 @@ inline SIZE bitmapSize(HBITMAP hbitmap) {
 }
 
 // general-purpose RAII wrapper
-template <typename T, typename CloseFnType, CloseFnType CloseFn/*BOOL (__stdcall *CloseFn)(T)*/>
+template <typename T, typename CloseFnType, CloseFnType CloseFn>
 struct CResource {
     CResource() : _obj(NULL) {}
     CResource(T obj) : _obj(obj) {}
