@@ -17,9 +17,17 @@
 #pragma comment(lib, "Comdlg32.lib")
 
 #ifdef CHROMA_DEBUG
-#pragma comment(linker, "/subsystem:console")
+    #ifdef _WIN64
+        #pragma comment(linker, "/subsystem:console,\"5.02\"")
+    #else
+        #pragma comment(linker, "/subsystem:console,\"5.01\"")
+    #endif
 #else
-#pragma comment(linker, "/subsystem:windows")
+    #ifdef _WIN64
+        #pragma comment(linker, "/subsystem:windows,\"5.02\"")
+    #else
+        #pragma comment(linker, "/subsystem:windows,\"5.01\"")
+    #endif
 #endif
 
 #define CHROMA_MAIN int main(int, char**) { return WinMain(NULL, NULL, NULL, SW_SHOWNORMAL); }
