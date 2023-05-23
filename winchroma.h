@@ -81,6 +81,8 @@ namespace impl {
 template <typename T>
 T* tempPtr(T &&x) { return &x; }
 
+} // namespace
+
 /* GEOMETRY UTILS */
 
 inline bool operator==(const POINT &a, const POINT &b) {
@@ -98,6 +100,8 @@ inline bool operator==(const SIZE &a, const SIZE &b) {
 inline bool operator!=(const SIZE &a, const SIZE &b) {
     return !(a == b);
 }
+
+namespace chroma {
 
 constexpr int rectWidth(const RECT &rect) {
     return rect.right - rect.left;
@@ -304,4 +308,4 @@ inline OPENFILENAME makeOpenFileName(TCHAR *fileBuf, HWND owner, const TCHAR *fi
     return open;
 }
 
-}
+} // namespace
