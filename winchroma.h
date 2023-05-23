@@ -30,7 +30,7 @@
     #endif
 #endif
 
-#define CHROMA_MAIN int main(int, char**) { return WinMain(NULL, NULL, NULL, SW_SHOWNORMAL); }
+#define CHROMA_MAIN int main(int, char**) { return _tWinMain(NULL, NULL, NULL, SW_SHOWNORMAL); }
 
 namespace chroma {
 
