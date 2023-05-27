@@ -242,24 +242,23 @@ struct WindowImpl {
     HWND wnd;
     virtual const TCHAR * className() const = 0;
     virtual LRESULT handleMessage(UINT msg, WPARAM wParam, LPARAM lParam) = 0;
-    inline HWND createWindow(
+    inline HWND create(
             const TCHAR *windowName = NULL,
             const RECT &windowRect = {},
             DWORD style = WS_OVERLAPPEDWINDOW,
             DWORD exStyle = 0,
             HWND owner = NULL,
             HMENU menu = NULL) {
-        return chroma::createWindow(
-            className(), windowName, windowRect, style, exStyle, owner, menu, this);
+        return createWindow(className(), windowName, windowRect, style, exStyle, owner, menu, this);
     }
-    inline HWND createChildWindow(
+    inline HWND createChild(
             HWND parent,
             const TCHAR *windowName = NULL,
             const RECT &windowRect = {},
             DWORD style = WS_VISIBLE,
             DWORD exStyle = 0,
             int ctrlId = NULL) {
-        return chroma::createChildWindow(
+        return createChildWindow(
             parent, className(), windowName, windowRect, style, exStyle, ctrlId, this);
     }
 };
