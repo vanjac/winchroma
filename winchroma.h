@@ -238,6 +238,48 @@ namespace impl {
     const char ignore = (InitCommonControls(), 0);
 }
 
+struct WindowImpl {
+    HWND wnd;
+    virtual const TCHAR * className() const = 0;
+    virtual LRESULT handleMessage(UINT msg, WPARAM wParam, LPARAM lParam) = 0;
+    inline HWND createWindow(
+            const TCHAR *windowName = NULL,
+            const RECT &windowRect = {},
+            DWORD style = WS_OVERLAPPEDWINDOW,
+            DWORD exStyle = 0,
+            HWND owner = NULL,
+            HMENU menu = NULL) {
+        return chroma::createWindow(
+            className(), windowName, windowRect, style, exStyle, owner, menu, this);
+    }
+    inline HWND createChildWindow(
+            HWND parent,
+            const TCHAR *windowName = NULL,
+            const RECT &windowRect = {},
+            DWORD style = WS_VISIBLE,
+            DWORD exStyle = 0,
+            int ctrlId = NULL) {
+        return chroma::createChildWindow(
+            parent, className(), windowName, windowRect, style, exStyle, ctrlId, this);
+    }
+};
+
+inline LRESULT CALLBACK windowImplProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    WindowImpl *self;
+    if (msg == WM_NCCREATE) {
+        self = (WindowImpl *)((CREATESTRUCT *)lParam)->lpCreateParams;
+        self->wnd = wnd;
+        SetWindowLongPtr(wnd, GWLP_USERDATA, (LONG_PTR)self);
+    } else {
+        self = (WindowImpl *)GetWindowLongPtr(wnd, GWLP_USERDATA);
+    }
+    if (self) {
+        return self->handleMessage(msg, wParam, lParam);
+    } else {
+        return DefWindowProc(wnd, msg, wParam, lParam);
+    }
+}
+
 /* GDI UTILS */
 
 inline SIZE bitmapSize(HBITMAP hbitmap) {
