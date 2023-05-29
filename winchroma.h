@@ -236,10 +236,6 @@ inline POINT cursorPos() {
     return pos;
 }
 
-namespace impl {
-    const char ignore = (InitCommonControls(), 0);
-}
-
 struct WindowImpl {
     HWND wnd;
     virtual const TCHAR * className() const = 0;
@@ -335,6 +331,32 @@ struct CDC : CResource<HDC, BOOL (__stdcall *)(HDC), DeleteDC> {
         SelectObject(_obj, obj);
     }
 };
+
+/* COMMON CONTROL UTILS */
+
+namespace impl {
+    const char ignore = (InitCommonControls(), 0);
+}
+
+inline void updateToolbarState(HWND wnd, HWND toolbarWnd) {
+    HMENU menu = GetMenu(wnd);
+    SendMessage(wnd, WM_INITMENU, (WPARAM)menu, 0);
+    int numButtons = (int)SendMessage(toolbarWnd, TB_BUTTONCOUNT, 0, 0);
+    for (int i = 0; i < numButtons; i++) {
+        TBBUTTONINFO btnInfo = {sizeof(btnInfo), TBIF_BYINDEX | TBIF_COMMAND | TBIF_STYLE};
+        SendMessage(toolbarWnd, TB_GETBUTTONINFO, i, (LPARAM)&btnInfo);
+        if (btnInfo.fsStyle & BTNS_SEP) continue;
+        UINT menuState = GetMenuState(menu, btnInfo.idCommand, MF_BYCOMMAND);
+        UINT btnState = ((menuState & MF_GRAYED) ? TBSTATE_INDETERMINATE : TBSTATE_ENABLED)
+            | ((menuState & MF_CHECKED) ? TBSTATE_CHECKED : 0);
+        SendMessage(toolbarWnd, TB_SETSTATE, btnInfo.idCommand, btnState);
+    }
+}
+
+inline void handleToolbarTip(HWND wnd, NMTTDISPINFO *info) {
+    GetMenuString(GetMenu(wnd), (UINT)info->hdr.idFrom, info->szText, _countof(info->szText), 0);
+    info->uFlags |= TTF_DI_SETITEM;
+}
 
 /* COMMON DIALOG UTILS */
 
