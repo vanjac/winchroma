@@ -167,9 +167,9 @@ inline int simpleMessageLoop(HWND mainWindow = NULL, HACCEL accel = NULL) {
     return (int)msg.wParam;
 }
 
-inline RECT defaultWindowRect(int clientWidth, int clientHeight,
-        DWORD style = WS_OVERLAPPEDWINDOW, bool menu = false, DWORD exStyle = 0) {
-    RECT rect = {0, 0, clientWidth, clientHeight};
+inline RECT defaultWindowRect(SIZE clientSize, bool menu = false,
+        DWORD style = WS_OVERLAPPEDWINDOW, WORD exStyle = 0) {
+    RECT rect = {0, 0, clientSize.cx, clientSize.cy};
     AdjustWindowRectEx(&rect, style, menu, exStyle);
     return {CW_USEDEFAULT, CW_USEDEFAULT,
         CW_USEDEFAULT + rectWidth(rect), CW_USEDEFAULT + rectHeight(rect)};
