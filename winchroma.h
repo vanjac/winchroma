@@ -135,7 +135,7 @@ inline RECT offsetRect(RECT rect, SIZE amount) {
 
 const WNDCLASSEX SCRATCH_CLASS = {
     sizeof(SCRATCH_CLASS),          // cbSize
-    CS_BYTEALIGNCLIENT,             // style
+    0,                              // style
     DefWindowProc,                  // lpfnWndProc
     0,                              // cbClsExtra
     0,                              // cbWndExtra
@@ -275,6 +275,15 @@ inline LRESULT CALLBACK windowImplProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM
     } else {
         return DefWindowProc(wnd, msg, wParam, lParam);
     }
+}
+
+/* RESOURCE UTILS */
+
+// unicode only. must use /n flag with rc.exe!
+inline const WCHAR * getString(HINSTANCE inst, UINT id) {
+    WCHAR *str = NULL;
+    LoadStringW(inst, id, (WCHAR *)&str, 0);
+    return str;
 }
 
 /* GDI UTILS */
