@@ -360,10 +360,9 @@ inline void updateToolbarStates(HWND toolbar, HMENU menu) {
     }
 }
 
-inline void handleToolbarTip(HWND wnd, NMTTDISPINFO *info) {
-    GetMenuString(GetMenu(wnd), (UINT)info->hdr.idFrom, info->szText, _countof(info->szText), 0);
+inline void handleToolbarTip(NMTTDISPINFO *info, HMENU menu) {
+    GetMenuString(menu, (UINT)info->hdr.idFrom, info->szText, _countof(info->szText), 0);
     if (TCHAR *tab = _tcsrchr(info->szText, L'\t')) *tab = '\n';
-    info->uFlags |= TTF_DI_SETITEM;
 }
 
 /* COMMON DIALOG UTILS */
