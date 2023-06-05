@@ -347,18 +347,16 @@ namespace impl {
     const char ignore = (InitCommonControls(), 0);
 }
 
-inline void updateToolbarState(HWND wnd, HWND toolbarWnd) {
-    HMENU menu = GetMenu(wnd);
-    SendMessage(wnd, WM_INITMENU, (WPARAM)menu, 0);
-    int numButtons = (int)SendMessage(toolbarWnd, TB_BUTTONCOUNT, 0, 0);
+inline void updateToolbarStates(HWND toolbar, HMENU menu) {
+    int numButtons = (int)SendMessage(toolbar, TB_BUTTONCOUNT, 0, 0);
     for (int i = 0; i < numButtons; i++) {
         TBBUTTONINFO btnInfo = {sizeof(btnInfo), TBIF_BYINDEX | TBIF_COMMAND | TBIF_STYLE};
-        SendMessage(toolbarWnd, TB_GETBUTTONINFO, i, (LPARAM)&btnInfo);
+        SendMessage(toolbar, TB_GETBUTTONINFO, i, (LPARAM)&btnInfo);
         if (btnInfo.fsStyle & BTNS_SEP) continue;
         UINT menuState = GetMenuState(menu, btnInfo.idCommand, MF_BYCOMMAND);
         UINT btnState = ((menuState & MF_GRAYED) ? TBSTATE_INDETERMINATE : TBSTATE_ENABLED)
             | ((menuState & MF_CHECKED) ? TBSTATE_CHECKED : 0);
-        SendMessage(toolbarWnd, TB_SETSTATE, btnInfo.idCommand, btnState);
+        SendMessage(toolbar, TB_SETSTATE, btnInfo.idCommand, btnState);
     }
 }
 
