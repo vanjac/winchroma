@@ -16,20 +16,6 @@
 #pragma comment(lib, "Comctl32.lib")
 #pragma comment(lib, "Comdlg32.lib")
 
-#ifdef CHROMA_DEBUG
-    #ifdef _WIN64
-        #pragma comment(linker, "/subsystem:console,\"5.02\"")
-    #else
-        #pragma comment(linker, "/subsystem:console,\"5.01\"")
-    #endif
-#else
-    #ifdef _WIN64
-        #pragma comment(linker, "/subsystem:windows,\"5.02\"")
-    #else
-        #pragma comment(linker, "/subsystem:windows,\"5.01\"")
-    #endif
-#endif
-
 #define CHROMA_MAIN int main(int, char**) { \
     return _tWinMain(GetModuleHandle(NULL), NULL, NULL, SW_SHOWNORMAL); \
 }
@@ -362,14 +348,15 @@ inline void updateToolbarStates(HWND toolbar, HMENU menu) {
 
 inline void handleToolbarTip(NMTTDISPINFO *info, HMENU menu) {
     GetMenuString(menu, (UINT)info->hdr.idFrom, info->szText, _countof(info->szText), 0);
-    if (TCHAR *tab = _tcsrchr(info->szText, L'\t')) *tab = '\n';
+    if (TCHAR *tab = _tcschr(info->szText, L'\t'))
+        *tab = '\n';
 }
 
 /* COMMON DIALOG UTILS */
 
 // initialize the most common fields of OPENFILENAME
 inline OPENFILENAME makeOpenFileName(TCHAR *fileBuf, HWND owner, const TCHAR *filters,
-        const TCHAR *defExt=NULL) {
+        const TCHAR *defExt = NULL) {
     OPENFILENAME open = {sizeof(open)};
     open.hwndOwner = owner;
     open.lpstrFilter = filters;
