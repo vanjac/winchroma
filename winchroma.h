@@ -272,6 +272,15 @@ inline const WCHAR * getString(HINSTANCE inst, UINT id) {
     return str;
 }
 
+inline const void * getResource(const TCHAR *name, const TCHAR *type = RT_RCDATA,
+        HINSTANCE inst = NULL, DWORD *sizeOut = NULL) {
+    HRSRC res = FindResource(inst, name, type);
+    if (sizeOut)
+        *sizeOut = SizeofResource(inst, res);
+    HGLOBAL mem = LoadResource(inst, res);
+    return LockResource(mem);
+}
+
 /* GDI UTILS */
 
 inline SIZE bitmapSize(HBITMAP hbitmap) {
