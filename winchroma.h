@@ -222,6 +222,11 @@ inline POINT cursorPos() {
     return pos;
 }
 
+inline void setCursorHitTest(HWND wnd, POINT pt) {
+    UINT code = (UINT)SendMessage(wnd, WM_NCHITTEST, 0, MAKELPARAM(pt.x, pt.y));
+    SendMessage(wnd, WM_SETCURSOR, (WPARAM)wnd, MAKELPARAM(code, WM_MOUSEMOVE));
+}
+
 struct WindowImpl {
     HWND wnd;
     virtual const TCHAR * className() const = 0;
