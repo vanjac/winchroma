@@ -3,9 +3,9 @@
 #define STRICT
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
-#include <Windows.h>
+#include <windows.h>
 #include <windowsx.h>
-#include <CommCtrl.h>
+#include <commctrl.h>
 #include <commdlg.h>
 #include <tchar.h>
 #include <stdio.h>
@@ -32,7 +32,7 @@ namespace chroma {
 #else // CHROMA_DEBUG
 
 #define LOG(format, ...) _tprintf(_T("%s:%d:  ") _T(format) _T("\n"), \
-    chroma::impl::fileName(_T(__FILE__)), __LINE__, __VA_ARGS__)
+    chroma::impl::fileName(_T(__FILE__)), __LINE__, ##__VA_ARGS__)
 #define CHECKERR(expr) chroma::impl::checkErr((expr), _T(__FILE__), __LINE__, _T(#expr))
 
 namespace impl {
@@ -309,7 +309,7 @@ struct CResource {
     }
     T * operator&() {
         reset();
-        return &obj;
+        return &_obj;
     }
     operator T() { return _obj; }
 
