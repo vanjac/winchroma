@@ -27,12 +27,15 @@ namespace chroma {
 #ifndef CHROMA_DEBUG
 
 #define LOG(...)
+#define LOG_FORMAT(...)
 #define CHECKERR(expr) (expr)
 
 #else // CHROMA_DEBUG
 
-#define LOG(format, ...) _tprintf(_T("%s:%d:  ") _T(format) _T("\n"), \
-    chroma::impl::fileName(_T(__FILE__)), __LINE__, ##__VA_ARGS__)
+#define LOG(message) _tprintf(_T("%s:%d:  %s\n"), \
+    chroma::impl::fileName(_T(__FILE__)), __LINE__, (message))
+#define LOG_FORMAT(format, ...) _tprintf(_T("%s:%d:  ") _T(format) _T("\n"), \
+    chroma::impl::fileName(_T(__FILE__)), __LINE__, __VA_ARGS__)
 #define CHECKERR(expr) chroma::impl::checkErr((expr), _T(__FILE__), __LINE__, _T(#expr))
 
 namespace impl {
@@ -182,7 +185,7 @@ inline HWND createChildWindow(
         const RECT &windowRect = {},
         DWORD style = WS_VISIBLE,
         DWORD exStyle = 0,
-        int ctrlId = NULL,
+        int ctrlId = 0,
         void *param = NULL) {
     return CreateWindowEx(exStyle, className, windowName, style | WS_CHILD,
         windowRect.left, windowRect.top, rectWidth(windowRect), rectHeight(windowRect),
@@ -246,7 +249,7 @@ struct WindowImpl {
             const RECT &windowRect = {},
             DWORD style = WS_VISIBLE,
             DWORD exStyle = 0,
-            int ctrlId = NULL) {
+            int ctrlId = 0) {
         return createChildWindow(
             parent, className(), windowName, windowRect, style, exStyle, ctrlId, this);
     }
