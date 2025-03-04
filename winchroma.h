@@ -153,7 +153,7 @@ inline int simpleMessageLoop(HWND mainWindow = NULL, HACCEL accel = NULL) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-    return (int)msg.wParam;
+    return int(msg.wParam);
 }
 
 inline RECT defaultWindowRect(SIZE clientSize, bool menu = false,
@@ -189,7 +189,7 @@ inline HWND createChildWindow(
         void *param = NULL) {
     return CreateWindowEx(exStyle, className, windowName, style | WS_CHILD,
         windowRect.left, windowRect.top, rectWidth(windowRect), rectHeight(windowRect),
-        parent, (HMENU)(size_t)ctrlId, GetModuleHandle(NULL), param);
+        parent, HMENU(size_t(ctrlId)), GetModuleHandle(NULL), param);
 }
 
 inline RECT windowRect(HWND hwnd) {
@@ -226,8 +226,8 @@ inline POINT cursorPos() {
 }
 
 inline void setCursorHitTest(HWND wnd, POINT pt) {
-    UINT code = (UINT)SendMessage(wnd, WM_NCHITTEST, 0, MAKELPARAM(pt.x, pt.y));
-    SendMessage(wnd, WM_SETCURSOR, (WPARAM)wnd, MAKELPARAM(code, WM_MOUSEMOVE));
+    UINT code = UINT(SendMessage(wnd, WM_NCHITTEST, 0, MAKELPARAM(pt.x, pt.y)));
+    SendMessage(wnd, WM_SETCURSOR, WPARAM(wnd), MAKELPARAM(code, WM_MOUSEMOVE));
 }
 
 struct WindowImpl {
@@ -258,11 +258,12 @@ struct WindowImpl {
 inline LRESULT CALLBACK windowImplProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     WindowImpl *self;
     if (msg == WM_NCCREATE) {
-        self = (WindowImpl *)((CREATESTRUCT *)lParam)->lpCreateParams;
+        CREATESTRUCT *create = reinterpret_cast<CREATESTRUCT *>(lParam);
+        self = reinterpret_cast<WindowImpl *>(create->lpCreateParams);
         self->wnd = wnd;
-        SetWindowLongPtr(wnd, GWLP_USERDATA, (LONG_PTR)self);
+        SetWindowLongPtr(wnd, GWLP_USERDATA, LONG_PTR(self));
     } else {
-        self = (WindowImpl *)GetWindowLongPtr(wnd, GWLP_USERDATA);
+        self = reinterpret_cast<WindowImpl *>(GetWindowLongPtr(wnd, GWLP_USERDATA));
     }
     if (self) {
         return self->handleMessage(msg, wParam, lParam);
@@ -276,7 +277,7 @@ inline LRESULT CALLBACK windowImplProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM
 // unicode only. must use /n flag with rc.exe!
 inline const WCHAR * getString(HINSTANCE inst, UINT id) {
     WCHAR *str = NULL;
-    LoadStringW(inst, id, (WCHAR *)&str, 0);
+    LoadStringW(inst, id, reinterpret_cast<WCHAR *>(&str), 0);
     return str;
 }
 
@@ -351,10 +352,10 @@ namespace impl {
 }
 
 inline void updateToolbarStates(HWND toolbar, HMENU menu) {
-    int numButtons = (int)SendMessage(toolbar, TB_BUTTONCOUNT, 0, 0);
+    int numButtons = int(SendMessage(toolbar, TB_BUTTONCOUNT, 0, 0));
     for (int i = 0; i < numButtons; i++) {
         TBBUTTONINFO btnInfo = {sizeof(btnInfo), TBIF_BYINDEX | TBIF_COMMAND | TBIF_STYLE};
-        SendMessage(toolbar, TB_GETBUTTONINFO, i, (LPARAM)&btnInfo);
+        SendMessage(toolbar, TB_GETBUTTONINFO, i, LPARAM(&btnInfo));
         if (btnInfo.fsStyle & BTNS_SEP) continue;
         UINT menuState = GetMenuState(menu, btnInfo.idCommand, MF_BYCOMMAND);
         UINT btnState = ((menuState & MF_GRAYED) ? TBSTATE_INDETERMINATE : TBSTATE_ENABLED)
@@ -364,7 +365,7 @@ inline void updateToolbarStates(HWND toolbar, HMENU menu) {
 }
 
 inline void handleToolbarTip(NMTTDISPINFO *info, HMENU menu) {
-    GetMenuString(menu, (UINT)info->hdr.idFrom, info->szText, _countof(info->szText), 0);
+    GetMenuString(menu, UINT(info->hdr.idFrom), info->szText, _countof(info->szText), 0);
     if (TCHAR *tab = _tcschr(info->szText, L'\t'))
         *tab = '\n';
 }
