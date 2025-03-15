@@ -232,6 +232,7 @@ inline void setCursorHitTest(HWND wnd, POINT pt) {
 
 struct WindowImpl {
     HWND wnd;
+    virtual ~WindowImpl() = default;
     virtual const TCHAR * className() const = 0;
     virtual LRESULT handleMessage(UINT msg, WPARAM wParam, LPARAM lParam) = 0;
     inline HWND create(
